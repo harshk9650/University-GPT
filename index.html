@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, #1a2a6c, #2c3e50);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background-color: #e6e6e6;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #1a73e8;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            display: flex;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .send-button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background-color: #0d62d9;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 15px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        .quick-action {
+            background-color: #e6e6e6;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .quick-action:hover {
+            background-color: #d6d6d6;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .timetable th, .timetable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .timetable th {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .timetable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .event-list {
+            list-style-type: none;
+        }
+
+        .event-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .event-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-details {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .pdf-link {
+            display: inline-block;
+            background-color: #1a73e8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .pdf-link:hover {
+            background-color: #0d62d9;
+        }
+
+        .reminder {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            padding: 12px 18px;
+            background-color: #e6e6e6;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-dots {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #888;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .quick-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>University Assistant</h1>
+            <p>Ask me about timetable, events, reminders, and more!</p>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hello! I'm your university assistant. How can I help you today?
+                <div class="message-time" id="currentTime"></div>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="quick-action" data-query="timetable">Show Timetable</button>
+            <button class="quick-action" data-query="events">Upcoming Events</button>
+            <button class="quick-action" data-query="reminders">My Reminders</button>
+            <button class="quick-action" data-query="pdf">Download PDF</button>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="userInput" placeholder="Type your message here...">
+            <button class="send-button" id="sendButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            const quickActions = document.querySelectorAll('.quick-action');
+            const currentTimeElement = document.getElementById('currentTime');
+            
+            // Set current time
+            const now = new Date();
+            currentTimeElement.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Sample data
+            const timetableData = [
+                { time: "9:00 - 10:00", monday: "Mathematics", tuesday: "Physics", wednesday: "Chemistry", thursday: "Biology", friday: "Computer Science" },
+                { time: "10:00 - 11:00", monday: "Physics", tuesday: "Chemistry", wednesday: "Biology", thursday: "Computer Science", friday: "Mathematics" },
+                { time: "11:00 - 12:00", monday: "Chemistry", tuesday: "Biology", wednesday: "Computer Science", thursday: "Mathematics", friday: "Physics" },
+                { time: "1:00 - 2:00", monday: "Biology", tuesday: "Computer Science", wednesday: "Mathematics", thursday: "Physics", friday: "Chemistry" },
+                { time: "2:00 - 3:00", monday: "Computer Science", tuesday: "Mathematics", wednesday: "Physics", thursday: "Chemistry", friday: "Biology" }
+            ];
+            
+            const eventsData = [
+                { title: "Science Fair", date: "Oct 15, 2023", time: "10:00 AM - 4:00 PM", location: "Main Auditorium" },
+                { title: "Career Counseling", date: "Oct 18, 2023", time: "2:00 PM - 4:00 PM", location: "Room 201" },
+                { title: "Sports Day", date: "Oct 22, 2023", time: "9:00 AM - 5:00 PM", location: "University Ground" },
+                { title: "Library Workshop", date: "Oct 25, 2023", time: "11:00 AM - 1:00 PM", location: "Central Library" }
+            ];
+            
+            const remindersData = [
+                { text: "Submit Mathematics assignment by tomorrow", time: "Due: Oct 12, 2023" },
+                { text: "Pay semester fees by next week", time: "Due: Oct 18, 2023" },
+                { text: "Prepare for mid-term exams", time: "Starts: Oct 30, 2023" }
+            ];
+            
+            // Function to add message to chat
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                
+                const time = new Date();
+                const timeString = time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                messageDiv.innerHTML = `
+                    ${message}
+                    <div class="message-time">${timeString}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Function to show typing indicator
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message bot-message typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                return typingDiv;
+            }
+            
+            // Function to handle user input
+            function handleUserInput() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // Show typing indicator
+                const typingIndicator = showTypingIndicator();
+                
+                // Simulate processing delay
+                setTimeout(() => {
+                    // Remove typing indicator
+                    typingIndicator.remove();
+                    
+                    // Process the message and generate response
+                    processMessage(message);
+                }, 1500);
+            }
+            
+            // Function to process user message and generate bot response
+            function processMessage(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                if (lowerMessage.includes('timetable') || lowerMessage.includes('schedule')) {
+                    showTimetable();
+                } else if (lowerMessage.includes('event') || lowerMessage.includes('upcoming')) {
+                    showEvents();
+                } else if (lowerMessage.includes('reminder') || lowerMessage.includes('remind')) {
+                    showReminders();
+                } else if (lowerMessage.includes('pdf') || lowerMessage.includes('download')) {
+                    showPdfOptions();
+                } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+                    addMessage("Hello! How can I assist you today? You can ask me about your timetable, upcoming events, reminders, or download PDFs.");
+                } else if (lowerMessage.includes('thank')) {
+                    addMessage("You're welcome! Let me know if you need anything else.");
+                } else {
+                    addMessage("I'm not sure I understand. You can ask me about:<br>- Your timetable<br>- Upcoming events<br>- Reminders<br>- Downloading PDFs<br>Or use the quick action buttons below.");
+                }
+            }
+            
+            // Function to display timetable
+            function showTimetable() {
+                let timetableHTML = `
+                    <h3>Your Weekly Timetable</h3>
+                    <table class="timetable">
+                        <tr>
+                            <th>Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                `;
+                
+                timetableData.forEach(row => {
+                    timetableHTML += `
+                        <tr>
+                            <td>${row.time}</td>
+                            <td>${row.monday}</td>
+                            <td>${row.tuesday}</td>
+                            <td>${row.wednesday}</td>
+                            <td>${row.thursday}</td>
+                            <td>${row.friday}</td>
+                        </tr>
+                    `;
+                });
+                
+                timetableHTML += `</table>`;
+                addMessage(timetableHTML);
+            }
+            
+            // Function to display events
+            function showEvents() {
+                let eventsHTML = `
+                    <h3>Upcoming University Events</h3>
+                    <ul class="event-list">
+                `;
+                
+                eventsData.forEach(event => {
+                    eventsHTML += `
+                        <li class="event-item">
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-details">
+                                Date: ${event.date}<br>
+                                Time: ${event.time}<br>
+                                Location: ${event.location}
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                eventsHTML += `</ul>`;
+                addMessage(eventsHTML);
+            }
+            
+            // Function to display reminders
+            function showReminders() {
+                let remindersHTML = `
+                    <h3>Your Reminders</h3>
+                    <div class="reminder">
+                `;
+                
+                remindersData.forEach(reminder => {
+                    remindersHTML += `
+                        <p><strong>${reminder.text}</strong><br>
+                        <small>${reminder.time}</small></p>
+                    `;
+                });
+                
+                remindersHTML += `</div>`;
+                addMessage(remindersHTML);
+            }
+            
+            // Function to display PDF options
+            function showPdfOptions() {
+                const pdfHTML = `
+                    <h3>Available PDF Downloads</h3>
+                    <p>Click on any of the following to download:</p>
+                    <div>
+                        <a href="#" class="pdf-link" onclick="alert('Course Syllabus PDF downloaded!')">Course Syllabus</a>
+                        <a href="#" class="pdf-link" onclick="alert('Academic Calendar PDF downloaded!')">Academic Calendar</a>
+                        <a href="#" class="pdf-link" onclick="alert('University Handbook PDF downloaded!')">University Handbook</a>
+                        <a href="#" class="pdf-link" onclick="alert('Exam Schedule PDF downloaded!')">Exam Schedule</a>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Note: In a real application, these would be actual PDF files.</p>
+                `;
+                addMessage(pdfHTML);
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', handleUserInput);
+            
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleUserInput();
+                }
+            });
+            
+            quickActions.forEach(button => {
+                button.addEventListener('click', function() {
+                    const query = this.getAttribute('data-query');
+                    userInput.value = query;
+                    handleUserInput();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
