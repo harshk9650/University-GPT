@@ -1,0 +1,73 @@
+<div class="portal-container" id="portalPage">
+    <!-- Navigation -->
+    <nav class="portal-nav">
+        <div class="nav-brand">
+            <i class="fas fa-university"></i>
+            <h1>Campus Portal</h1>
+        </div>
+        
+        <div class="nav-user">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=John+Doe&background=1a73e8&color=fff" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <span class="user-name">John Doe</span>
+                    <span class="user-id">STU2024001</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <div class="portal-content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <button class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                
+                <button class="menu-item" data-page="chatbot">
+                    <i class="fas fa-robot"></i>
+                    <span>Campus GPT</span>
+                </button>
+                
+                <button class="menu-item" data-page="timetable">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Timetable</span>
+                </button>
+                
+                <button class="menu-item" data-page="attendance">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Attendance</span>
+                    <span class="badge">95%</span>
+                </button>
+                
+                <button class="menu-item" data-page="exams">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Exams</span>
+                    <span class="badge badge-danger">3</span>
+                </button>
+                
+                <button class="menu-item" data-page="resources">
+                    <i class="fas fa-book"></i>
+                    <span>Resources</span>
+                </button>
+                
+                <button class="menu-item" data-page="reminders">
+                    <i class="fas fa-bell"></i>
+                    <span>Reminders</span>
+                    <span class="badge badge-warning">2</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Pages will be loaded here -->
+            <div id="pageContent"></div>
+        </main>
+    </div>
+</div>
